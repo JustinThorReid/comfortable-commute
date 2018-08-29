@@ -1,0 +1,12 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": ["es2017"],
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "dist",
+    "sourceMap": false,
+    "moduleResolution": "node"
+  }
+}
