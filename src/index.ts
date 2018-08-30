@@ -1,6 +1,17 @@
 require('dotenv').config();
 import * as request from 'request'
+import * as express from 'express'
 import { DataRecord } from './tables'
+
+const app = express()
+
+app.use('/', (req, res) => {
+	res.send("hi")
+})
+
+app.listen(8080, () => {
+	console.log("listen")
+})
 
 const CURRENT_URL = `${process.env.darksky_host}/forecast/${process.env.darksky_secret}/${process.env.work_lat},${process.env.work_lng}?exclude=minutely,hourly,daily,alerts,flags`
 console.log(CURRENT_URL)
@@ -10,6 +21,10 @@ request({
 	method: 'GET',
 	json: true
 }, (error, response, body) => {
+	if (!body || !body.currently) {
+		return
+	}
+
 	const currently = body.currently
 
 	const newRecord: DataRecord = {
