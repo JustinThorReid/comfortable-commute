@@ -29,7 +29,7 @@ function forecast(time: number = undefined): Promise<Forecast> {
 			const currently = body.currently
 
 			const newRecord: Forecast = {
-				time: currently.time,
+				time: new Date(currently.time * 1000),
 				precipType: currently.summary,
 				latitude: parseFloat(process.env.work_lat),
 				longitude: parseFloat(process.env.work_lng),
@@ -109,7 +109,7 @@ app.post('/api/submit', async (req, res) => {
 	const options = req.body.options
 
 	const newData: TrainingData = {
-		time: forecast.time,
+		time: new Date(forecast.time),
 		precipType: forecast.precipType,
 		latitude: forecast.latitude,
 		longitude: forecast.longitude,

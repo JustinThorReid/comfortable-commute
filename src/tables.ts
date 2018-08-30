@@ -13,7 +13,7 @@ export enum Transport {
 }
 
 export interface Forecast {
-	time: number;
+	time: Date;
 	latitude: number;
 	longitude: number;
 	dewPoint: number;
