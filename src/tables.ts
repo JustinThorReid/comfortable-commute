@@ -1,5 +1,18 @@
-export interface DataRecord {
-	id?: number;
+export enum Clothes {
+	Shorts = 1,
+	Pants,
+	Jacket,
+	Parka
+}
+
+export enum Transport {
+	Walk = 1,
+	Ride,
+	Drive,
+	Home
+}
+
+export interface Forecast {
 	time: number;
 	latitude: number;
 	longitude: number;
@@ -21,14 +34,10 @@ export interface DataRecord {
 	feelsTemperature: number;
 }
 
-export interface DataOutput {
+export interface TrainingData extends Forecast {
 	id?: number;
-	name: string;
-}
-
-export interface DataFeedback {
-	id?: number;
-	inputId: number;
-	outputId: number;
-	value: boolean;
+	clothes: Clothes;
+	transport: Transport;
+	umbrella: boolean;
+	rainjacket: boolean;
 }

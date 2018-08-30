@@ -3,6 +3,9 @@ body {
   max-width: 800;
   font-size: 32pt;
 }
+p {
+  font-size: 24pt;
+}
 table {
   font-size: 32pt;
 }

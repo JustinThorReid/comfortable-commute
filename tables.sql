@@ -1,4 +1,4 @@
-CREATE TABLE `record` (
+CREATE TABLE `training_data` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `time` datetime NOT NULL,
   `latitude` float DEFAULT NULL,
@@ -19,23 +19,9 @@ CREATE TABLE `record` (
   `precipIntensityError` float DEFAULT NULL,
   `temperature` float DEFAULT NULL,
   `feelsTemperature` float DEFAULT NULL,
+  `clothes` int(10) unsigned NOT NULL,
+  `transport` int(10) unsigned NOT NULL,
+  `umbrella` tinyint(1) NOT NULL,
+  `rainjacket` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `output_datapoint` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(512) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `user_feedback` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `inputId` int(10) unsigned NOT NULL,
-  `outputId` int(10) unsigned NOT NULL,
-  `value` tinyint(4) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `inputId` (`inputId`),
-  KEY `outputId` (`outputId`),
-  CONSTRAINT `user_feedback_ibfk_1` FOREIGN KEY (`inputId`) REFERENCES `record` (`id`),
-  CONSTRAINT `user_feedback_ibfk_2` FOREIGN KEY (`outputId`) REFERENCES `output_datapoint` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

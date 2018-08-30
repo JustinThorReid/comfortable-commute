@@ -1,18 +1,21 @@
 require('dotenv').config();
 import * as request from 'request'
 import * as express from 'express'
-import { DataRecord } from './tables'
+import * as bodyparser from 'body-parser';
+import { Forecast, TrainingData, Transport, Clothes } from './tables'
+import * as db from './database'
 
-const app = express()
+const app: express.Application = express()
+app.use(bodyparser.json())
 
-function forecast(time: number = undefined): Promise<DataRecord> {
+function forecast(time: number = undefined): Promise<Forecast> {
 	let forecastUrl = `${process.env.darksky_host}/forecast/${process.env.darksky_secret}/${process.env.work_lat},${process.env.work_lng}`
 	if (time) {
 		forecastUrl += `,${time}`
 	}
 	forecastUrl += `?exclude=minutely,hourly,daily,alerts,flags`
 
-	return new Promise<DataRecord>((resolve, reject) => {
+	return new Promise<Forecast>((resolve, reject) => {
 		request({
 			url: forecastUrl,
 			method: 'GET',
@@ -25,7 +28,7 @@ function forecast(time: number = undefined): Promise<DataRecord> {
 
 			const currently = body.currently
 
-			const newRecord: DataRecord = {
+			const newRecord: Forecast = {
 				time: currently.time,
 				precipType: currently.summary,
 				latitude: parseFloat(process.env.work_lat),
@@ -58,6 +61,84 @@ app.get('/api/forecast/now', async (_req, res) => {
 		res.send(result)
 	} catch (err) {
 		console.error("Forcast error", err)
+	}
+})
+
+function mapTransport(text: string): Transport {
+	switch (text) {
+		case "walk": {
+			return Transport.Walk
+		}
+		case "ride": {
+			return Transport.Ride
+		}
+		case "drive": {
+			return Transport.Drive
+		}
+		case "home": {
+			return Transport.Home
+		}
+	}
+
+	console.error("Unknown transport type", text)
+	return -1
+}
+
+function mapClothes(text: string): Clothes {
+	switch (text) {
+		case "shorts": {
+			return Clothes.Shorts
+		}
+		case "pants": {
+			return Clothes.Pants
+		}
+		case "jacket": {
+			return Clothes.Jacket
+		}
+		case "parka": {
+			return Clothes.Parka
+		}
+	}
+
+	console.error("Unknown transport type", text)
+	return -1
+}
+
+app.post('/api/submit', async (req, res) => {
+	console.log(req.body)
+	const forecast = req.body.forecast
+	const options = req.body.options
+
+	const newData: TrainingData = {
+		time: forecast.time,
+		precipType: forecast.precipType,
+		latitude: forecast.latitude,
+		longitude: forecast.longitude,
+		dewPoint: forecast.dewPoint,
+		humidity: forecast.humidity,
+		pressure: forecast.pressure,
+		windSpeed: forecast.windSpeed,
+		windGust: forecast.windGust,
+		windBearing: forecast.windBearing,
+		cloudCover: forecast.cloudCover,
+		uvIndex: forecast.uvIndex,
+		visibility: forecast.visibility,
+		ozone: forecast.ozone,
+		precipProbability: forecast.precipProbability,
+		precipIntensity: forecast.precipIntensity,
+		precipIntensityError: forecast.precipIntensityError,
+		temperature: forecast.temperature,
+		feelsTemperature: forecast.feelsTemperature,
+		umbrella: options.umbrella || false,
+		rainjacket: options.rainjacket || false,
+		transport: mapTransport(options.transport),
+		clothes: mapClothes(options.clothes)
+	}
+
+	try {
+		db.insertTestData(newData)
+	} catch (err) {
+		console.error("Submit error", err)
 	}
 })
 
