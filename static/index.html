@@ -1,5 +1,93 @@
 <html>
-<body>
-  <h1>Test</h1>
-</body>
+
+  <head>
+    <link rel="stylesheet" href="index.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+
+  <body>
+    <h1>Record Options</h1>
+    <form id="options" v-on:submit.prevent="processForm">
+      <div class="status">
+        Temp: {{ forecast.feelsTemperature }} Rain: {{ forecast.precipProbability }}% Humidity: {{ forecast.humidity }}
+      </div>
+      <table class="radio">
+        <tr v-bind:class="{selected: options.clothes === 'shorts'}">
+          <td><label for="shorts">Shorts</label></td>
+          <td><input type="radio" v-model="options.clothes" id="shorts" value="shorts"></td>
+        </tr>
+        <tr v-bind:class="{selected: options.clothes === 'pants'}">
+          <td><label for="pants">Pants</label></td>
+          <td><input type="radio" v-model="options.clothes" id="pants" value="pants"></td>
+        </tr>
+        <tr v-bind:class="{selected: options.clothes === 'jacket'}">
+          <td><label for="jacket">Jacket</label></td>
+          <td><input type="radio" v-model="options.clothes" id="jacket" value="jacket"></td>
+        </tr>
+        <tr v-bind:class="{selected: options.clothes === 'parka'}">
+          <td><label for="parka">Parka</label></td>
+          <td><input type="radio" v-model="options.clothes" id="parka" value="parka"></td>
+        </tr>
+      </table>
+      <table class="check">
+        <tr v-bind:class="{selected: options.rainjacket}">
+          <td><label for="rainjacket">Rain Jacket</label></td>
+          <td><input type="checkbox" v-model="options.rainjacket" id="rainjacket"></td>
+        </tr>
+        <tr v-bind:class="{selected: options.umbrella}">
+          <td><label for="umbrella">Umbrella</label></td>
+          <td><input type="checkbox" v-model="options.umbrella" id="umbrella"></td>
+        </tr>
+      </table>
+      <table class="radio">
+        <tr v-bind:class="{selected: options.transport === 'walk'}">
+          <td><label for="walk">Walk</label></td>
+          <td><input type="radio" v-model="options.transport" id="walk" value="walk"></td>
+        </tr>
+        <tr v-bind:class="{selected: options.transport === 'ride'}">
+          <td><label for="ride">Ride</label></td>
+          <td><input type="radio" v-model="options.transport" id="ride" value="ride"></td>
+        </tr>
+        <tr v-bind:class="{selected: options.transport === 'drive'}">
+          <td><label for="drive">Drive</label></td>
+          <td><input type="radio" v-model="options.transport" id="drive" value="drive"></td>
+        </tr>
+        <tr v-bind:class="{selected: options.transport === 'home'}">
+          <td><label for="home">Home</label></td>
+          <td><input type="radio" v-model="options.transport" id="home" value="home"></td>
+        </tr>
+      </table>
+      <a v-on:click="processForm" href="#" class="hide" v-bind:class="{show: options.transport && options.clothes}">Submit</a>
+    </form>
+
+    <script>
+      new Vue({
+        el: '#options',
+        data() {
+          return {
+            forecast: {},
+            options: {}
+          }
+        },
+        mounted() {
+          axios
+            .get('/api/forecast/now')
+            .then(response => (this.forecast = response.data))
+        },
+        methods: {
+          processForm(e) {
+            e.preventDefault();
+
+            axios.post('/api/submit', {
+              forecast: this.forecast,
+              options: this.options
+            })
+          }
+        }
+      })
+
+    </script>
+  </body>
+
 </html>
