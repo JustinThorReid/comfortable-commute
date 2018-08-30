@@ -13,7 +13,7 @@
     <p>Always pick the best possible combination. There are many conditions where you could wear shorts and ride or wear pants and ride but one combination is always the <strong>best</strong> combination in the current conditions.
       <form id="options" v-on:submit.prevent="processForm">
         <div class="status">
-          Temp: {{ forecast.feelsTemperature }} Rain: {{ forecast.precipProbability * 100 }}% Humidity: {{ forecast.humidity }}
+          Temp: {{ forecast.feelsTemperature }} Rain: {{ forecast.precipIntensity * 100 }}% Humidity: {{ forecast.humidity }}
         </div>
         <table class="radio">
           <tr v-bind:class="{selected: options.clothes === 'shorts'}">
