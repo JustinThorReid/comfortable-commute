@@ -105,7 +105,6 @@ function mapClothes(text: string): Clothes {
 }
 
 app.post('/api/submit', async (req, res) => {
-	console.log(req.body)
 	const forecast = req.body.forecast
 	const options = req.body.options
 
@@ -136,9 +135,13 @@ app.post('/api/submit', async (req, res) => {
 	}
 
 	try {
-		db.insertTestData(newData)
+		await db.insertTestData(newData)
+		res.statusCode = 200
+		res.send()
 	} catch (err) {
 		console.error("Submit error", err)
+		res.statusCode = 500
+		res.send()
 	}
 })
 

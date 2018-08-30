@@ -6,7 +6,7 @@ export async function insertTestData(data: TrainingData): Promise<void> {
 	connection.connect();
 
 	return (new Promise<void>((resolve, reject) => {
-		connection.query('Insert into training_data SET ?', data, function(error, insertResult) {
+		connection.query('Insert into training_data SET ?', data, function(error) {
 			connection.end();
 
 			if (error) {

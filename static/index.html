@@ -83,6 +83,12 @@
               axios.post('/api/submit', {
                 forecast: this.forecast,
                 options: this.options
+              }).then(function(response) {
+                if (response.status === 200) {
+                  window.location.href = '/success.html'
+                } else {
+                  window.location.href = '/error.html'
+                }
               })
             }
           }
