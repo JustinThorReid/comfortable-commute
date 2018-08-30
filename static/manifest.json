@@ -1,0 +1,11 @@
+{
+  "name": "Training Data",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "Collect training data using current weather conditions.",
+  "icons": [{
+    "src": "icon.png",
+    "sizes": "72x72 96x96 128x128 256x256"
+  }]
+}
