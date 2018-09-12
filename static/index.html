@@ -87,6 +87,9 @@
                 axios
                   .get('/api/forecast/now?lat=' + pos.coords.latitude + '&lng=' + pos.coords.longitude)
                   .then(response => (instance.forecast = response.data))
+              }, function(err) {
+                console.error("geolocation failed", err)
+                window.location.href = '/error.html'
               });
             } else {
               axios
