@@ -8,11 +8,8 @@ import * as db from './database'
 const app: express.Application = express()
 app.use(bodyparser.json())
 
-function forecast(time: number = undefined): Promise<Forecast> {
-	let forecastUrl = `${process.env.darksky_host}/forecast/${process.env.darksky_secret}/${process.env.work_lat},${process.env.work_lng}`
-	if (time) {
-		forecastUrl += `,${time}`
-	}
+function forecast(lat: number, lng: number): Promise<Forecast> {
+	let forecastUrl = `${process.env.darksky_host}/forecast/${process.env.darksky_secret}/${lat.toString()},${lng.toString()}`
 	forecastUrl += `?exclude=minutely,hourly,daily,alerts,flags`
 
 	return new Promise<Forecast>((resolve, reject) => {
@@ -20,9 +17,9 @@ function forecast(time: number = undefined): Promise<Forecast> {
 			url: forecastUrl,
 			method: 'GET',
 			json: true
-		}, (error, _response, body) => {
+		}, (error, response, body) => {
 			if (error || !body || !body.currently) {
-				reject()
+				reject({ error, response, body })
 				return
 			}
 
@@ -55,9 +52,12 @@ function forecast(time: number = undefined): Promise<Forecast> {
 	})
 }
 
-app.get('/api/forecast/now', async (_req, res) => {
+app.get('/api/forecast/now', async (req, res) => {
 	try {
-		const result = await forecast()
+		const lat = (req.params.lat && parseFloat(req.params.lat)) || parseFloat(process.env.work_lat)
+		const lng = (req.params.lng && parseFloat(req.params.lng)) || parseFloat(process.env.work_lng)
+
+		const result = await forecast(lat, lng)
 		res.send(result)
 	} catch (err) {
 		console.error("Forcast error", err)

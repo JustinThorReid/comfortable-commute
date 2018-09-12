@@ -11,9 +11,12 @@
   <body>
     <h1>Record Options</h1>
     <p>Always pick the best possible combination. There are many conditions where you could wear shorts and ride or wear pants and ride but one combination is always the <strong>best</strong> combination in the current conditions.
-      <form id="options" v-on:submit.prevent="processForm">
+      <form id="options" v-on:submit.prevent="processForm" v-if="forecast.time">
         <div class="status">
           Temp: {{ forecast.feelsTemperature }} Rain: {{ forecast.precipIntensity * 100 }}% Humidity: {{ forecast.humidity }}
+          <p v-if="coords.latitude">
+            ({{ coords.latitude }}, {{ coords.longitude }})
+          </p>
         </div>
         <table class="radio">
           <tr v-bind:class="{selected: options.clothes === 'shorts'}">
@@ -70,13 +73,26 @@
           data() {
             return {
               forecast: {},
-              options: {}
+              options: {},
+              coords: {}
             }
           },
           mounted() {
-            axios
-              .get('/api/forecast/now')
-              .then(response => (this.forecast = response.data))
+            const instance = this
+
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(function(pos) {
+                instance.coords = pos.coords
+
+                axios
+                  .get('/api/forecast/now?lat=' + pos.coords.latitude + '&lng=' + pos.coords.longitude)
+                  .then(response => (instance.forecast = response.data))
+              });
+            } else {
+              axios
+                .get('/api/forecast/now')
+                .then(response => (this.forecast = response.data))
+            }
           },
           methods: {
             processForm(e) {
